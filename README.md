@@ -71,8 +71,8 @@ web_arquitecturamonolitica/
    - Frontend: `docker compose logs --follow frontend` (Ready en 3000)
 3. Probar:
    - Web: `http://localhost:3000`
-   - Salud API: `http://localhost:8080/health`
-   - Ready API: `http://localhost:8080/ready` (204)
+   - API: `http://localhost:8080/health`
+  
 4. Apagar: `docker compose down`
 
 ## Variables de entorno
