@@ -1,4 +1,4 @@
-# web_arquitecturamonolitica
+# Web_arquitecturamonolitica
 
 Aplicación  para gestionar mascotas y sus cuidados. Incluye:
 - Backend en Go  con lógica en handlers y acceso a datos directo mediante stores en `models`.
