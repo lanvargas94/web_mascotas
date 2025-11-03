@@ -1,6 +1,6 @@
-"use client"
+﻿"use client"
 import React, { useState } from 'react'
-import CareList from './CareList'
+import CareList from './CareListFixed'
 import { useToast } from './Toast'
 import { usePets, removePet } from '../lib/hooks'
 import { CardSkeleton } from './Skeleton'
@@ -60,3 +60,4 @@ export default function PetList() {
     </div>
   )
 }
+

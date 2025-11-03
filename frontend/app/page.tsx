@@ -1,7 +1,7 @@
-import dynamic from 'next/dynamic'
+﻿import dynamic from 'next/dynamic'
 
-const PetForm = dynamic(() => import('../components/PetForm'), { ssr: false, loading: () => <div>Cargando formulario…</div> })
-const PetList = dynamic(() => import('../components/PetList'), { ssr: false, loading: () => <div>Cargando listado…</div> })
+const PetForm = dynamic(() => import('../components/PetForm'), { ssr: false, loading: () => <div>Cargando formulario...��</div> })
+const PetList = dynamic(() => import('../components/PetList'), { ssr: false, loading: () => <div>Cargando listado...��</div> })
 
 export default function Page() {
   return (
@@ -15,3 +15,5 @@ export default function Page() {
     </div>
   )
 }
+
+

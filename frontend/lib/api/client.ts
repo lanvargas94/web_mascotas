@@ -1,4 +1,4 @@
-export type Mascota = {
+﻿export type Mascota = {
   id: number
   nombre: string
   especie: 'Perro' | 'Gato' | 'Conejo'
@@ -9,7 +9,7 @@ export type Mascota = {
 
 export type Cuidado = {
   id: number
-  tipo_cuidado: 'Vacunación' | 'Desparasitación' | 'Consulta Veterinaria' | 'Baño'
+  tipo_cuidado: 'Vacunacion' | 'Desparasitacion' | 'Consulta Veterinaria' | 'Bano'
   descripcion: string
   fecha_cuidado: string
   mascota_id: number
@@ -39,4 +39,5 @@ export const deletePet = (id: number) => fetch(`${API}/mascotas/${id}`, { method
 export const listCares = (petId: number) => apiFetch<Cuidado[]>(`/mascotas/${petId}/cuidados`)
 export const createCare = (petId: number, data: Omit<Cuidado,'id'|'mascota_id'>) => apiFetch<Cuidado>(`/mascotas/${petId}/cuidados`, { method: 'POST', body: JSON.stringify(data) })
 export const deleteCare = (id: number) => fetch(`${API}/cuidados/${id}`, { method: 'DELETE' }).then(r => { if(!r.ok) throw new Error(`HTTP ${r.status}`) })
+
 

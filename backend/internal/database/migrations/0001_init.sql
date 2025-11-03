@@ -34,12 +34,15 @@ CREATE TABLE IF NOT EXISTS cuidados (
 
 DO $$
 BEGIN
-  IF NOT EXISTS (
+  IF EXISTS (
     SELECT 1 FROM pg_constraint WHERE conname = 'cuidados_tipo_check'
   ) THEN
-    ALTER TABLE cuidados
-      ADD CONSTRAINT cuidados_tipo_check CHECK (tipo_cuidado IN ('Vacunación','Desparasitación','Consulta Veterinaria','Baño'));
+    ALTER TABLE cuidados DROP CONSTRAINT cuidados_tipo_check;
   END IF;
+  ALTER TABLE cuidados
+    ADD CONSTRAINT cuidados_tipo_check CHECK (
+      tipo_cuidado IN ('Vacunacion','Desparasitacion','Consulta Veterinaria','Bano')
+    );
 END$$;
 
 CREATE INDEX IF NOT EXISTS idx_cuidados_mascota_id ON cuidados(mascota_id);

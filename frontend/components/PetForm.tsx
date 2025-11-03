@@ -1,4 +1,4 @@
-"use client"
+﻿"use client"
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -10,9 +10,9 @@ import Tooltip from './Tooltip'
 const API = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'
 
 const schema = z.object({
-  nombre: z.string().min(2, 'Mínimo 2 caracteres').max(100),
+  nombre: z.string().min(2, 'Minimo 2 caracteres').max(100),
   especie: z.enum(["Perro","Gato","Conejo"]),
-  raza: z.string().min(2, 'Mínimo 2 caracteres').max(100),
+  raza: z.string().min(2, 'Minimo 2 caracteres').max(100),
   fecha_nacimiento: z.string()
     .regex(/^\d{4}-\d{2}-\d{2}$/,'Formato YYYY-MM-DD')
     .refine((v)=> {
@@ -52,12 +52,12 @@ export default function PetForm() {
       <h2 id="form-title" className="text-xl font-medium">Nueva Mascota</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="block text-sm mb-1" htmlFor="nombre">Nombre <span className="text-red-600">*</span> <Tooltip label="Campo obligatorio. Mínimo 2 caracteres." /></label>
+          <label className="block text-sm mb-1" htmlFor="nombre">Nombre <span className="text-red-600">*</span> <Tooltip label="Campo obligatorio. Minimo 2 caracteres." /></label>
           <input id="nombre" aria-invalid={!!errors.nombre} className="w-full border p-2 rounded" placeholder="Nombre" {...register('nombre')} />
           {errors.nombre && <p className="text-sm text-red-600">{errors.nombre.message as string}</p>}
         </div>
         <div>
-          <label className="block text-sm mb-1" htmlFor="raza">Raza <span className="text-red-600">*</span> <Tooltip label="Campo obligatorio. Mínimo 2 caracteres." /></label>
+          <label className="block text-sm mb-1" htmlFor="raza">Raza <span className="text-red-600">*</span> <Tooltip label="Campo obligatorio. Minimo 2 caracteres." /></label>
           <input id="raza" aria-invalid={!!errors.raza} className="w-full border p-2 rounded" placeholder="Raza" {...register('raza')} />
           {errors.raza && <p className="text-sm text-red-600">{errors.raza.message as string}</p>}
         </div>
@@ -87,3 +87,5 @@ export default function PetForm() {
     </form>
   )
 }
+
+

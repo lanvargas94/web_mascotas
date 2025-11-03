@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 import React, { useState } from 'react'
 import { useToast } from './Toast'
 import { usePetCares, addCare, removeCare } from '../lib/hooks'
@@ -8,11 +8,10 @@ import Tooltip from './Tooltip'
 
 export default function CareList({ mascotaId }: { mascotaId: number }) {
   const { cares, isLoading } = usePetCares(mascotaId)
-  const defaultTipo = 'Vacunación' as Cuidado['tipo_cuidado']
+  const defaultTipo = 'Vacunacion' as Cuidado['tipo_cuidado']
   const [form, setForm] = useState<{ tipo_cuidado: Cuidado['tipo_cuidado']; descripcion: string; fecha: string; hora: string }>({ tipo_cuidado: defaultTipo, descripcion: '', fecha: '', hora: '' })
   const { show } = useToast()
 
-  // Validaciones (cliente): m�nimo d�a siguiente y solo L-S (sin restricci�n de hora)
   const fmt2 = (n:number) => String(n).padStart(2,'0')
   const todayLocal = () => {
     const d = new Date()
@@ -27,22 +26,15 @@ export default function CareList({ mascotaId }: { mascotaId: number }) {
   const isSunday = (dateStr:string) => {
     if (!dateStr) return false
     const d = new Date(`${dateStr}T00:00:00`)
-    return d.getDay() === 0 // 0 = Sunday
+    return d.getDay() === 0
   }
-  // Sin validación de rango horario; solo fecha mínima y no domingo
 
   const add = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
       const { fecha, hora, descripcion, tipo_cuidado } = form
-      if (isPastOrSameDate(fecha)) {
-        show('Solo puede programar cuidados a partir del día siguiente.','error')
-        return
-      }
-      if (isSunday(fecha)) {
-        show('No es posible registrar cuidados los días domingo. Por favor seleccione un día entre lunes y sábado.','error')
-        return
-      }
+      if (isPastOrSameDate(fecha)) { show('Solo puede programar cuidados a partir del dia siguiente.','error'); return }
+      if (isSunday(fecha)) { show('No es posible registrar cuidados los dias domingo. Seleccione entre lunes y sabado.','error'); return }
       const iso = new Date(`${fecha}T${hora}`).toISOString()
       await addCare(mascotaId, { tipo_cuidado, descripcion, fecha_cuidado: iso })
       setForm({ tipo_cuidado: defaultTipo, descripcion: '', fecha: '', hora: '' })
@@ -55,10 +47,10 @@ export default function CareList({ mascotaId }: { mascotaId: number }) {
       <form onSubmit={add} className="p-3 border rounded bg-white space-y-2">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-2 items-end">
           <select className="border p-2 rounded" value={form.tipo_cuidado} onChange={e=>setForm({...form, tipo_cuidado: e.target.value as Cuidado['tipo_cuidado']})}>
-            <option>Vacunación</option>
-            <option>Desparasitación</option>
+            <option>Vacunacion</option>
+            <option>Desparasitacion</option>
             <option>Consulta Veterinaria</option>
-            <option>Baño</option>
+            <option>Bano</option>
           </select>
           <div>
             <label className="block text-sm mb-1">Fecha <Tooltip label="Obligatorio. Selecciona la fecha del cuidado." /></label>
@@ -68,7 +60,7 @@ export default function CareList({ mascotaId }: { mascotaId: number }) {
             <label className="block text-sm mb-1">Hora <Tooltip label="Obligatorio. Selecciona la hora y minuto." /></label>
             <input type="time" className="border p-2 rounded w-full" value={form.hora} onChange={e=>setForm({...form, hora:e.target.value})} />
           </div>
-          <textarea className="border p-2 rounded md:col-span-4" placeholder="Descripción" value={form.descripcion} onChange={e=>setForm({...form, descripcion:e.target.value})} />
+          <textarea className="border p-2 rounded md:col-span-4" placeholder="Descripcion" value={form.descripcion} onChange={e=>setForm({...form, descripcion:e.target.value})} />
         </div>
         <button disabled={!form.fecha || !form.hora || (form.descripcion.trim().length<2) || isPastOrSameDate(form.fecha) || isSunday(form.fecha)} className="px-3 py-2 bg-green-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed">Agregar cuidado</button>
       </form>
@@ -82,7 +74,6 @@ export default function CareList({ mascotaId }: { mascotaId: number }) {
           const mm = String(d.getMonth()+1).padStart(2,'0')
           const dd = String(d.getDate()).padStart(2,'0')
           const dateOnly = `${yyyy}-${mm}-${dd}`
-          // If time exists (not midnight and not invalid), show ", hora HH:MM AM/PM"
           const hrs = d.getHours()
           const mins = d.getMinutes()
           const hasTime = !isNaN(hrs) && !isNaN(mins) && (hrs !== 0 || mins !== 0)
@@ -105,5 +96,4 @@ export default function CareList({ mascotaId }: { mascotaId: number }) {
     </div>
   )
 }
-
 

@@ -167,7 +167,7 @@ func (h *Handlers) CreateCuidadoForMascota(w http.ResponseWriter, r *http.Reques
         return
     }
     var in struct {
-        TipoCuidado  string `json:"tipo_cuidado" validate:"required,oneof=Vacunación Desparasitación 'Consulta Veterinaria' Baño"`
+        TipoCuidado  string `json:"tipo_cuidado" validate:"required,oneof=Vacunacion Desparasitacion 'Consulta Veterinaria' Bano"`
         Descripcion  string `json:"descripcion" validate:"required,min=2,max=500"`
         FechaCuidado string `json:"fecha_cuidado" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
     }
@@ -186,6 +186,10 @@ func (h *Handlers) CreateCuidadoForMascota(w http.ResponseWriter, r *http.Reques
     t, err := time.Parse(time.RFC3339, in.FechaCuidado)
     if err != nil {
         writeError(w, NewBadRequest("invalid_datetime", "fecha_cuidado debe ser RFC3339"))
+        return
+    }
+    if appErr := validateCareSchedule(t); appErr != nil {
+        writeError(w, appErr)
         return
     }
     c := &models.Cuidado{TipoCuidado: in.TipoCuidado, Descripcion: in.Descripcion, FechaCuidado: t, MascotaID: mascotaID}
@@ -217,7 +221,7 @@ func (h *Handlers) UpdateCuidado(w http.ResponseWriter, r *http.Request) {
         return
     }
     var in struct {
-        TipoCuidado  string `json:"tipo_cuidado" validate:"required,oneof=Vacunación Desparasitación 'Consulta Veterinaria' Baño"`
+        TipoCuidado  string `json:"tipo_cuidado" validate:"required,oneof=Vacunacion Desparasitacion 'Consulta Veterinaria' Bano"`
         Descripcion  string `json:"descripcion" validate:"required,min=2,max=500"`
         FechaCuidado string `json:"fecha_cuidado" validate:"required,datetime=2006-01-02T15:04:05Z07:00"`
         MascotaID    int64  `json:"mascota_id" validate:"required,gt=0"`
@@ -237,6 +241,10 @@ func (h *Handlers) UpdateCuidado(w http.ResponseWriter, r *http.Request) {
     t, err := time.Parse(time.RFC3339, in.FechaCuidado)
     if err != nil {
         writeError(w, NewBadRequest("invalid_datetime", "fecha_cuidado debe ser RFC3339"))
+        return
+    }
+    if appErr := validateCareSchedule(t); appErr != nil {
+        writeError(w, appErr)
         return
     }
     c := &models.Cuidado{ID: id, TipoCuidado: in.TipoCuidado, Descripcion: in.Descripcion, FechaCuidado: t, MascotaID: in.MascotaID}
@@ -318,3 +326,56 @@ func mapFieldErrors(verrs validator.ValidationErrors) []FieldError {
     }
     return out
 }
+
+// validateCareSchedule aplica las reglas del negocio:
+// - Solo programar a partir del día siguiente (no pasado ni mismo día)
+// - Solo lunes a sábado (no domingos)
+// - Horario permitido 08:00 a 18:00 (inclusive)
+func validateCareSchedule(t time.Time) error {
+    loc := time.Now().Location()
+    now := time.Now().In(loc)
+    tt := t.In(loc)
+
+    ny, nm, nd := now.Date()
+    ty, tm, td := tt.Date()
+
+    // Fecha pasada
+    if ty < ny || (ty == ny && (tm < nm || (tm == nm && td < nd))) {
+        return NewBadRequest("past_date", "No es posible registrar cuidados en fechas anteriores a la actual.")
+    }
+    // Mismo día no permitido
+    if ty == ny && tm == nm && td == nd {
+        return NewBadRequest("same_day", "Solo puede programar cuidados a partir del día siguiente.")
+    }
+    // Domingo no permitido
+    if tt.Weekday() == time.Sunday {
+        return NewBadRequest("sunday_not_allowed", "No es posible registrar cuidados los días domingo. Por favor seleccione un día entre lunes y sábado.")
+    }
+    return nil
+}
+
+// validateFutureDateTime aplica las reglas de negocio para fecha/hora:
+// - Fecha no puede ser anterior al día actual (según hora del servidor)
+// - Si la fecha es hoy, la hora debe ser al menos +1 hora respecto a ahora
+func validateFutureDateTime(t time.Time) error {
+    now := time.Now().UTC()
+    tt := t.UTC()
+
+    ny, nm, nd := now.Date()
+    ty, tm, td := tt.Date()
+
+    // Fecha pasada
+    if ty < ny || (ty == ny && (tm < nm || (tm == nm && td < nd))) {
+        return NewBadRequest("past_date", "No es posible registrar cuidados con una fecha anterior al día actual.")
+    }
+
+    // Si es hoy, exigir +1 hora de tolerancia
+    if ty == ny && tm == nm && td == nd {
+        min := now.Add(1 * time.Hour)
+        if tt.Before(min) {
+            return NewBadRequest("past_time", "Debe seleccionar una hora al menos una hora después de la hora actual.")
+        }
+    }
+    return nil
+}
+

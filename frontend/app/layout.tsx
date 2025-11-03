@@ -1,10 +1,10 @@
-import '../styles/globals.css'
+﻿import '../styles/globals.css'
 import React from 'react'
 import { ToastProvider } from '../components/Toast'
 
 export const metadata = {
   title: 'Mascotas',
-  description: 'Gestión de mascotas y cuidados',
+  description: 'Gestion de mascotas y cuidados',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <main className="w-full">
             <div className="max-w-5xl mx-auto px-4 py-6 sm:px-6">
               {/* Fallback simple para asegurar contenido mínimo */}
-              <div className="sr-only">Aplicación Mascotas</div>
+              <div className="sr-only">Aplicacion Mascotas</div>
               {children}
             </div>
           </main>
@@ -29,3 +29,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+
+
