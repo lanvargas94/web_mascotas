@@ -1,0 +1,14 @@
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/.env
+backend/.env
+.env
+.env.*
+*.log
+dist/
+coverage/
+*.exe
+*.out
+Thumbs.db
+.DS_Store
